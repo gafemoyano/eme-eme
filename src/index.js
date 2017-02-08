@@ -12,6 +12,7 @@ const config = {
   storageBucket: "eme-eme.appspot.com",
   messagingSenderId: "1046357356195"
 };
+
 firease.initializeApp(config)
 
 ReactDOM.render(
