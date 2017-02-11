@@ -60,6 +60,7 @@ class App extends Component {
 
     posts.orderByChild('week').startAt(1).endAt(5).on('value', snap => {
       const result = snap.val();
+      console.log(snap.key)
       this.setState({ posts: [...result].reverse() });
     });
   }
