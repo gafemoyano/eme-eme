@@ -2,9 +2,9 @@
 export const rootFontSize = 14; // 1 rem
 // Colors
 export const black = '#121921';
-export const halfBlack = 'rgba($black, 0.5)';
+export const halfBlack = 'rgba(18, 25, 33, 0.5)';
 export const white = '#ffffff';
-export const halfWhite = 'rgba($white, 0.5)';
+export const halfWhite = 'rgba(255, 255, 255, 0.5)';
 export const green = '#61c192';
 export const lightYellow = '#fffeca';
 export const blue = '#2D3589';

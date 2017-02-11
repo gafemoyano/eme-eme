@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import PostPreview from './PostPreview'
+import PostPreview from './PostPreview';
 import firebase from 'firebase';
-import Player from 'react-dock-player/lib/'
-import { tablet } from './style-variables'
+import Player from 'react-dock-player/lib/';
+import { tablet } from './style-variables';
 
 const NavBar = styled.header`
   display: flex;
@@ -42,7 +42,7 @@ const Main = styled.main`
 
 const Content = styled.div`
   margin: 0 auto;
-  max-width: ${tablet-90}px;
+  max-width: ${tablet - 90}px;
   overflow: visible;
   padding: 0 1rem;
   @media (min-width: ${tablet}px){
@@ -52,68 +52,65 @@ const Content = styled.div`
 
 class App extends Component {
   state = {
-  posts: [],
-  }
+    posts: [],
+  };
   componentDidMount() {
     const db = firebase.database();
-    const root = db.ref().child('/');
-    const posts = root.child('posts');
+    const posts = db.ref('posts');
 
-    posts.on('value', snap => {
-      var result = snap.val();
-      if(Array.isArray(result)) {
-        this.setState({posts: [...result].reverse()})
-      }
-    })
+    posts.orderByChild('week').startAt(1).endAt(5).on('value', snap => {
+      const result = snap.val();
+      this.setState({ posts: [...result].reverse() });
+    });
   }
 
-   handlePlay = async(event, audioLocation, details) => {
+  handlePlay = async post => {
     event.preventDefault();
+    console.log(post)
     const storage = firebase.storage();
-    const gsReference = storage.refFromURL(audioLocation);
+    const audioReference = storage.refFromURL(post.audio);
+    const artReference = storage.refFromURL(post.art);
     //TODO: Use Promise.all to await multiple calls to Firebase
-    const url = await gsReference.getDownloadURL();
-
+    // audioReference.getDownloadURL().then(url => this.setState({audio:}))
+    const [audio, art] = await Promise.all([
+      audioReference.getDownloadURL(),
+      artReference.getDownloadURL(),
+    ]);
+    console.log(audio)
+    console.log(art)
     this.setState({
-      audio: url,
-      details: {
-        song: details.song,
-        artist: details.artist,
-        title: details.title,
-        art: details.artUrl,
-      },
+      audioTitle: `${post.artist} - ${post.song}`,
+      playerTitle: `#${post.week}`,
+      audioUrl: audio,
+      artUrl: art,
     });
     this.player.play();
-  }
+  };
 
   render() {
-    const posts = this.state.posts
+    const posts = this.state.posts;
     return (
       <div>
         <NavBar>
           <NavBarLeft>Mucha Música</NavBarLeft>
-            <Navigation>
-              <NavLink href="#">Blog</NavLink>
-              <NavLink href="#">Playlist</NavLink>
-              <NavLink href="#">Acerca</NavLink>
-              <NavLink href="#">Contacto</NavLink>
-            </Navigation>
-          </NavBar>
+          <Navigation>
+            <NavLink href="#">Blog</NavLink>
+            <NavLink href="#">Playlist</NavLink>
+            <NavLink href="#">Acerca</NavLink>
+            <NavLink href="#">Contacto</NavLink>
+          </Navigation>
+        </NavBar>
         <Main>
           <Content>
-          {posts.map((post, index) => {
-            const postNumber = posts.length - index;
-            const title = `${post.artist} - ${post.song}`;
-            return(<PostPreview
-              key={index}
-              number={postNumber}
-              title={title}
-              text={post.text}
-              date={post.date}
-              audioLocation={post.audio}
-            />);
-           })
-          }
+            {posts.map((post, index) => {
+              return (
+                <PostPreview
+                  key={index}
+                  post={post}
+                  handlePlay={this.handlePlay}
+                />
+              );
+            })}
           </Content>
           <Player
             ref={node => this.player = node}
@@ -121,12 +118,12 @@ class App extends Component {
             playerTitle={this.state.playerTitle}
             audioUrl={this.state.audioUrl}
             artUrl={this.state.artUrl}
+            loadAudio={this.handlePlay}
           />
         </Main>
       </div>
     );
   }
 }
-
 
 export default App;

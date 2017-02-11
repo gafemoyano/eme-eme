@@ -1,15 +1,10 @@
-import React from 'react';
+import React, { PropTypes, Component } from 'react';
 import styled from 'styled-components';
 import PlayIcon from './icon-play.svg';
 import DetailsIcon from './icon-details.svg';
 import ShareIcon from './icon-share.svg';
 
-import {
-    white,
-    green,
-    smartphone,
- } from './style-variables';
-
+import { white, black, smartphone } from './style-variables';
 
 const ToolBar = styled.nav`
   text-transform: uppercase;
@@ -19,8 +14,8 @@ const ToolBar = styled.nav`
   color: rgba(18,25,33,.25);
   font-size: 0.85em;
   background: ${white};
-  border-top: 2px solid ${green};
-  color: ${green};
+  border-top: 2px solid ${black};
+  color: ${black};
   display: flex;
   flex-wrap: wrap;
   font-size: 14px;
@@ -47,6 +42,7 @@ const ToolBarItem = styled.a`
   // At least as tall as icons;
   min-height: 20px;
   line-height: 1em;
+  cursor: pointer;
 
   &:hover{
     opacity: .8;
@@ -79,14 +75,36 @@ const ShareButton = styled(ToolBarItem)`
   color: rgba(18,25,33,.5);
   display: block;
 `;
-const PostNavigation = () => {
-  return (
-    <ToolBar>
-    <PlayButton>Reproducir</PlayButton>
-    <DetailsButton>Leer</DetailsButton>
-    <ShareButton>Compartir</ShareButton>
-    </ToolBar>
-  );
+class PostNavigation extends Component {
+  static propTypes = {
+    post: PropTypes.shape({
+      art: PropTypes.string.isRequired,
+      artist: PropTypes.string.isRequired,
+      audio: PropTypes.string.isRequired,
+      date: PropTypes.string.isRequired,
+      song: PropTypes.string.isRequired,
+      text: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      video: PropTypes.string.isRequired,
+      week: PropTypes.number.isRequired,
+    }).isRequired,
+    handlePlay: PropTypes.func.isRequired,
+  };
+  handleClick = e => {
+    e.preventDefault();
+    this.props.handlePlay(this.props.post);
+  };
+  render() {
+    return (
+      <ToolBar>
+        <PlayButton onClick={this.handleClick} title="reproducir audio">
+          Reproducir
+        </PlayButton>
+        <DetailsButton>Leer</DetailsButton>
+        <ShareButton>Compartir</ShareButton>
+      </ToolBar>
+    );
+  }
 }
 
 export default PostNavigation;
