@@ -88,11 +88,12 @@ class PostNavigation extends Component {
       video: PropTypes.string.isRequired,
       week: PropTypes.number.isRequired,
     }).isRequired,
+    postKey: PropTypes.string.isRequired,
     handlePlay: PropTypes.func.isRequired,
   };
   handleClick = e => {
     e.preventDefault();
-    this.props.handlePlay(this.props.post);
+    this.props.handlePlay(this.props.postKey);
   };
   render() {
     return (

@@ -112,6 +112,7 @@ class PostPreview extends Component {
       video: PropTypes.string.isRequired,
       week: PropTypes.number.isRequired,
     }).isRequired,
+    postKey: PropTypes.string.isRequired,
     handlePlay: PropTypes.func.isRequired,
   };
 
@@ -127,7 +128,7 @@ class PostPreview extends Component {
     }
   }
   render() {
-    const { post, handlePlay } = this.props;
+    const { post, postKey, handlePlay } = this.props;
     const { date, week, artist, song, text } = post;
     const formatDate = new Date(date).toDateString();
     const title = `${artist} - ${song}`;
@@ -154,7 +155,7 @@ class PostPreview extends Component {
             </TextContainer>
           </Wrap>
           <AccesibilityTitle>Post Navigation</AccesibilityTitle>
-          <PostNavigation handlePlay={handlePlay} post={post} />
+          <PostNavigation handlePlay={handlePlay} post={post} postKey={postKey} />
         </Content>
       </Article>
     );
